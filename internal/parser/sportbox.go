@@ -23,6 +23,7 @@ type article struct {
 	href     string
 	imageURL string
 	date     string
+	tags     []string
 	html     string
 }
 
@@ -41,8 +42,8 @@ func (s Sportbox) Parse() error {
 			continue
 		}
 		fmt.Printf(
-			"title: %s\nhref: %s\nimage: %s\ndate: %s\n\nhtml: \n%s\n----------\n",
-			article.title, article.href, article.imageURL, article.date, article.html,
+			"title: %s\nhref: %s\nimage: %s\ndate: %s\ntags: %s\nhtml: \n%s\n----------\n",
+			article.title, article.href, article.imageURL, article.date, article.tags, article.html,
 		)
 	}
 	return nil
@@ -62,6 +63,9 @@ func (s Sportbox) getArticle(item articlesListItem) (*article, error) {
 	article.imageURL = s.getField("<img itemprop=\"image\" src=\"(.*?)\">", articlePage)
 	article.date = s.getField("<meta itemprop=\"dateCreated\" content=\"(.*?)\">", articlePage)
 	article.html = s.getField("<div class=\"js-mediator-article\">(.*?)</div>", articlePage)
+
+	matcher := NewTagMatcher()
+	article.tags = matcher.MatchTags(article.title + " " + article.html)
 
 	return article, nil
 }
@@ -140,7 +144,7 @@ func (s Sportbox) cleanHTML(text string) string {
 	text = regexp.MustCompile("(?msi)<a(.*?)>").ReplaceAllString(text, "")
 	text = regexp.MustCompile("(?msi)</a>").ReplaceAllString(text, "")
 	text = regexp.MustCompile("(?msi)\n").ReplaceAllString(text, "")
-	text = regexp.MustCompile("(?msi)<h3>Читайте также(.*)").ReplaceAllString(text, "")
+	text = regexp.MustCompile("(?msi)<h3>Читайте также(.*)</ul>").ReplaceAllString(text, "")
 	text = regexp.MustCompile("(?msi)<p><b>Следите за новостями и эфиром в (.*)").ReplaceAllString(text, "")
 
 	return strings.TrimSpace(text)
