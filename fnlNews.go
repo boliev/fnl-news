@@ -50,5 +50,8 @@ func (app App) getParsers() []parser.Parser {
 	sportbox := parser.NewSportboxParser("https://news.sportbox.ru", "/Vidy_sporta/Futbol/Russia/1st_division")
 	parsers = append(parsers, sportbox)
 
+	onefnl := parser.NewOnefnlParser("https://1fnl.ru", "/news/")
+	parsers = append(parsers, onefnl)
+
 	return parsers
 }

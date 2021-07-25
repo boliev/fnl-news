@@ -94,7 +94,7 @@ func (s Sportbox) getArticlesList() ([]articlesListItem, error) {
 	var articles []articlesListItem
 	body, err := s.getListPage()
 	if err != nil {
-		return articles, fmt.Errorf("sorry cant get sportbox list page: %s", err)
+		return articles, fmt.Errorf("sorry cant get %s list page: %s", s.GetName(), err)
 	}
 
 	newsListRegexp := regexp.MustCompile("(?msi)<li><div class=\"_Sportbox_Spb2015_Components_TeazerBlock_TeazerBlock\">(.*?)</li>")
