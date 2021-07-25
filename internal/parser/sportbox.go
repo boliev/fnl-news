@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"github.com/boliev/fnl-news/internal/domain"
 	"github.com/go-resty/resty/v2"
 	"regexp"
 	"strings"
@@ -18,20 +19,25 @@ type articlesListItem struct {
 	href  string
 }
 
-type article struct {
-	title    string
-	href     string
-	imageURL string
-	date     string
-	tags     []string
-	html     string
+// NewSportboxParser creates Sportbox parser
+func NewSportboxParser(domain string, path string) *Sportbox {
+	return &Sportbox{
+		Domain: domain,
+		Path:   path,
+	}
+}
+
+// GetName return name of the parser
+func (s Sportbox) GetName() string {
+	return "Sportbox"
 }
 
 // Parse articles from Sportbox site
-func (s Sportbox) Parse() error {
+func (s Sportbox) Parse() ([]*domain.Article, error) {
+	var parsedArticles []*domain.Article
 	articles, err := s.getArticlesList()
 	if err != nil {
-		return err
+		return parsedArticles, err
 	}
 
 	for _, v := range articles {
@@ -41,18 +47,20 @@ func (s Sportbox) Parse() error {
 			fmt.Println(err.Error())
 			continue
 		}
+		parsedArticles = append(parsedArticles, article)
 		fmt.Printf(
-			"title: %s\nhref: %s\nimage: %s\ndate: %s\ntags: %s\nhtml: \n%s\n----------\n",
-			article.title, article.href, article.imageURL, article.date, article.tags, article.html,
+			"title: %s\nhref: %s\nimage: %s\ndate: %s\ntags: %s\n----------\n",
+			article.Title, article.Href, article.ImageURL, article.Date, article.Tags,
 		)
 	}
-	return nil
+	return parsedArticles, nil
 }
 
-func (s Sportbox) getArticle(item articlesListItem) (*article, error) {
-	article := &article{
-		title: item.title,
-		href:  item.href,
+func (s Sportbox) getArticle(item articlesListItem) (*domain.Article, error) {
+	article := &domain.Article{
+		Title:  item.title,
+		Href:   item.href,
+		IsSent: false,
 	}
 
 	articlePage, err := s.getArticlePage(item)
@@ -60,12 +68,15 @@ func (s Sportbox) getArticle(item articlesListItem) (*article, error) {
 		return nil, err
 	}
 
-	article.imageURL = s.getField("<img itemprop=\"image\" src=\"(.*?)\">", articlePage)
-	article.date = s.getField("<meta itemprop=\"dateCreated\" content=\"(.*?)\">", articlePage)
-	article.html = s.getField("<div class=\"js-mediator-article\">(.*?)</div>", articlePage)
+	article.ImageURL = s.getField("<img itemprop=\"image\" src=\"(.*?)\">", articlePage)
+	article.Date = s.getField("<meta itemprop=\"dateCreated\" content=\"(.*?)\">", articlePage)
+	article.HTML = s.getField("<div class=\"js-mediator-article\">(.*?)</div>", articlePage)
 
 	matcher := NewTagMatcher()
-	article.tags = matcher.MatchTags(article.title + " " + article.html)
+	article.Tags = strings.Join(matcher.MatchTags(article.Title+" "+article.HTML), " #")
+	if article.Tags != "" {
+		article.Tags = "#" + article.Tags
+	}
 
 	return article, nil
 }

@@ -1,0 +1,11 @@
+version: '3'
+services:
+  db:
+    image: postgres:9.6
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: fnluser
+      POSTGRES_DB: fnl
+      POSTGRES_PASSWORD: 123456
