@@ -36,3 +36,8 @@ func (r ArticleRepository) GetNewTg() []*domain.Article {
 	r.db.Where("tg_sent = ?", false).Find(&articles)
 	return articles
 }
+
+// MarkAsSentTG mark article as sent to tg
+func (r ArticleRepository) MarkAsSentTG(article *domain.Article) {
+	r.db.Model(article).Update("tg_sent", true)
+}

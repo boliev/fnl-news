@@ -57,6 +57,7 @@ func (p TelegramPublisher) publishArticle(article *domain.Article) error {
 	if res != nil && res.StatusCode() > 299 {
 		return fmt.Errorf("cant send message. Code: %d, response: %s. request: %s", res.StatusCode(), res.String(), res.Request.Body)
 	}
+	p.repository.MarkAsSentTG(article)
 
 	return err
 }
