@@ -29,3 +29,10 @@ func (r ArticleRepository) SaveAll(articles []*domain.Article) {
 		r.Save(article)
 	}
 }
+
+// GetNewTg returns new articles
+func (r ArticleRepository) GetNewTg() []*domain.Article {
+	var articles []*domain.Article
+	r.db.Where("tg_sent = ?", false).Find(&articles)
+	return articles
+}

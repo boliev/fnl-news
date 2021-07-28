@@ -60,7 +60,7 @@ func (s Sportbox) getArticle(item articlesListItem) (*domain.Article, error) {
 	article := &domain.Article{
 		Title:  item.title,
 		Href:   item.href,
-		IsSent: false,
+		TgSent: false,
 	}
 
 	articlePage, err := s.getArticlePage(item)

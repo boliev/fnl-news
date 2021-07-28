@@ -11,5 +11,5 @@ type Article struct {
 	Date     string
 	Tags     string
 	HTML     string `gorm:"-"`
-	IsSent   bool   `gorm:"default:false"`
+	TgSent   bool   `gorm:"default:false"`
 }

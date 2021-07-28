@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/boliev/fnl-news/internal/domain"
 	"github.com/boliev/fnl-news/internal/parser"
+	"github.com/boliev/fnl-news/internal/publisher"
 	"github.com/boliev/fnl-news/internal/repository"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -17,6 +18,7 @@ type App struct {
 func (app App) Start() {
 	db := app.createDB()
 	articleRepository := repository.CreateArticleRepository(db)
+	publishers := app.getPublishers(articleRepository)
 	parsers := app.getParsers()
 	fmt.Println("Starting to parse news")
 	for _, prsr := range parsers {
@@ -27,6 +29,9 @@ func (app App) Start() {
 			continue
 		}
 		articleRepository.SaveAll(articles)
+	}
+	for _, pblisher := range publishers {
+		pblisher.PublishNew()
 	}
 }
 
@@ -54,4 +59,13 @@ func (app App) getParsers() []parser.Parser {
 	parsers = append(parsers, onefnl)
 
 	return parsers
+}
+
+func (app App) getPublishers(articleRepository *repository.ArticleRepository) []publisher.Publisher {
+	var publishers []publisher.Publisher
+
+	telegramPublisher := publisher.NewTelegramPublisher(articleRepository)
+	publishers = append(publishers, telegramPublisher)
+
+	return publishers
 }
