@@ -11,7 +11,7 @@ import (
 // TelegramPublisher struct
 type TelegramPublisher struct {
 	repository *repository.ArticleRepository
-	chatId     string
+	chatID     string
 	token      string
 }
 
@@ -24,12 +24,12 @@ type requestBody struct {
 // NewTelegramPublisher creates publisher
 func NewTelegramPublisher(
 	repository *repository.ArticleRepository,
-	chatId string,
+	chatID string,
 	token string,
 ) *TelegramPublisher {
 	return &TelegramPublisher{
 		repository: repository,
-		chatId:     chatId,
+		chatID:     chatID,
 		token:      token,
 	}
 }
@@ -53,7 +53,7 @@ func (p TelegramPublisher) PublishNew() {
 func (p TelegramPublisher) publishArticle(article *domain.Article) error {
 	client := resty.New()
 	body := requestBody{
-		ChatID:    p.chatId,
+		ChatID:    p.chatID,
 		Text:      p.compileMessage(article),
 		ParseMode: "Markdown",
 	}

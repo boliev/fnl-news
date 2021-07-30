@@ -7,9 +7,11 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Config struct
 type Config struct {
 }
 
+// NewConfig constructor
 func NewConfig() (*Config, error) {
 	viper.SetConfigName("config.yaml")
 	viper.SetConfigType("yaml")
@@ -37,14 +39,17 @@ func NewConfig() (*Config, error) {
 	return &Config{}, nil
 }
 
+// GetString returns string from config
 func (c Config) GetString(key string) string {
 	return viper.GetString(key)
 }
 
+// GetInt returns int from config
 func (c Config) GetInt(key string) int {
 	return viper.GetInt(key)
 }
 
+// Get returns struct from config
 func (c Config) Get(key string, strct interface{}) interface{} {
 	err := viper.UnmarshalKey(key, strct)
 	if err != nil {
@@ -54,6 +59,7 @@ func (c Config) Get(key string, strct interface{}) interface{} {
 	return strct
 }
 
+// UnmarshalKey fill struct from config
 func (c Config) UnmarshalKey(key string, strct interface{}) error {
 	return viper.UnmarshalKey(key, strct)
 }
