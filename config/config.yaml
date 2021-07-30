@@ -1,0 +1,7 @@
+parsers:
+  sportbox:
+    domain: "https://news.sportbox.ru"
+    path: "/Vidy_sporta/Futbol/Russia/1st_division"
+  onefnl:
+    domain: "https://1fnl.ru"
+    path: "/news/"

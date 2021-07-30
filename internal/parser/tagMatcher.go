@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"sort"
 	"strings"
 )
 
@@ -51,6 +52,7 @@ func (t TagMatcher) MatchTags(text string) []string {
 			}
 		}
 	}
+	sort.Strings(tags)
 
 	return tags
 }

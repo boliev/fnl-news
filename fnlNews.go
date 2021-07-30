@@ -6,6 +6,7 @@ import (
 	"github.com/boliev/fnl-news/internal/parser"
 	"github.com/boliev/fnl-news/internal/publisher"
 	"github.com/boliev/fnl-news/internal/repository"
+	"github.com/boliev/fnl-news/pkg/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -16,10 +17,17 @@ type App struct {
 
 // Start the app
 func (app App) Start() {
-	db := app.createDB()
+	cfg := app.getConfig()
+	var parsersConfig map[string]parser.Config
+	err := cfg.UnmarshalKey("parsers", &parsersConfig)
+	if err != nil {
+		fmt.Printf("Unable to get parsers config, %v", err)
+	}
+
+	db := app.createDB(cfg.GetString("database_dsn"))
 	articleRepository := repository.CreateArticleRepository(db)
-	publishers := app.getPublishers(articleRepository)
-	parsers := app.getParsers()
+	publishers := app.getPublishers(articleRepository, cfg)
+	parsers := app.getParsers(parsersConfig)
 	fmt.Println("Starting to parse news")
 	for _, prsr := range parsers {
 		fmt.Printf(" - %s\n", prsr.GetName())
@@ -35,8 +43,7 @@ func (app App) Start() {
 	}
 }
 
-func (app App) createDB() *gorm.DB {
-	dsn := "host=localhost user=fnluser password=123456 dbname=fnl port=5432 sslmode=disable"
+func (app App) createDB(dsn string) *gorm.DB {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(fmt.Sprintf("error: %s", err.Error()))
@@ -49,23 +56,44 @@ func (app App) createDB() *gorm.DB {
 	return db
 }
 
-func (app App) getParsers() []parser.Parser {
+func (app App) getParsers(config map[string]parser.Config) []parser.Parser {
 	var parsers []parser.Parser
+	if sportboxConfig, ok := config["sportbox"]; ok {
+		sportbox := parser.NewSportboxParser(sportboxConfig)
+		parsers = append(parsers, sportbox)
+	} else {
+		fmt.Printf("Unable to find config for sportbox parser")
+	}
 
-	sportbox := parser.NewSportboxParser("https://news.sportbox.ru", "/Vidy_sporta/Futbol/Russia/1st_division")
-	parsers = append(parsers, sportbox)
-
-	onefnl := parser.NewOnefnlParser("https://1fnl.ru", "/news/")
-	parsers = append(parsers, onefnl)
+	if onefnlConfig, ok := config["onefnl"]; ok {
+		onefnl := parser.NewOnefnlParser(onefnlConfig)
+		parsers = append(parsers, onefnl)
+	} else {
+		fmt.Printf("Unable to find config for onefnl parser")
+	}
 
 	return parsers
 }
 
-func (app App) getPublishers(articleRepository *repository.ArticleRepository) []publisher.Publisher {
+func (app App) getPublishers(
+	articleRepository *repository.ArticleRepository, config *config.Config) []publisher.Publisher {
 	var publishers []publisher.Publisher
 
-	telegramPublisher := publisher.NewTelegramPublisher(articleRepository)
+	telegramPublisher := publisher.NewTelegramPublisher(
+		articleRepository,
+		config.GetString("tg_chat_id"),
+		config.GetString("tg_token"),
+	)
 	publishers = append(publishers, telegramPublisher)
 
 	return publishers
+}
+
+func (app App) getConfig() *config.Config {
+	cfg, err := config.NewConfig()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return cfg
 }

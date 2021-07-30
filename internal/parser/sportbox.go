@@ -20,16 +20,16 @@ type articlesListItem struct {
 }
 
 // NewSportboxParser creates Sportbox parser
-func NewSportboxParser(domain string, path string) *Sportbox {
+func NewSportboxParser(config Config) *Sportbox {
 	return &Sportbox{
-		Domain: domain,
-		Path:   path,
+		Domain: config.Domain,
+		Path:   config.Path,
 	}
 }
 
 // GetName return name of the parser
 func (s Sportbox) GetName() string {
-	return "Sportbox"
+	return "sportbox"
 }
 
 // Parse articles from Sportbox site

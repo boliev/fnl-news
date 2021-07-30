@@ -15,16 +15,16 @@ type Onefnl struct {
 }
 
 // NewOnefnlParser creates Onefnl parser
-func NewOnefnlParser(domain string, path string) *Onefnl {
+func NewOnefnlParser(config Config) *Onefnl {
 	return &Onefnl{
-		Domain: domain,
-		Path:   path,
+		Domain: config.Domain,
+		Path:   config.Path,
 	}
 }
 
 // GetName return name of the parser
 func (p Onefnl) GetName() string {
-	return "Onefnl"
+	return "onefnl"
 }
 
 // Parse parses articles from onefnl

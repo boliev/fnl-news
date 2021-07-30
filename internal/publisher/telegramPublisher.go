@@ -5,11 +5,14 @@ import (
 	"github.com/boliev/fnl-news/internal/domain"
 	"github.com/boliev/fnl-news/internal/repository"
 	"github.com/go-resty/resty/v2"
+	"strings"
 )
 
 // TelegramPublisher struct
 type TelegramPublisher struct {
 	repository *repository.ArticleRepository
+	chatId     string
+	token      string
 }
 
 type requestBody struct {
@@ -19,9 +22,15 @@ type requestBody struct {
 }
 
 // NewTelegramPublisher creates publisher
-func NewTelegramPublisher(repository *repository.ArticleRepository) *TelegramPublisher {
+func NewTelegramPublisher(
+	repository *repository.ArticleRepository,
+	chatId string,
+	token string,
+) *TelegramPublisher {
 	return &TelegramPublisher{
 		repository: repository,
+		chatId:     chatId,
+		token:      token,
 	}
 }
 
@@ -44,16 +53,15 @@ func (p TelegramPublisher) PublishNew() {
 func (p TelegramPublisher) publishArticle(article *domain.Article) error {
 	client := resty.New()
 	body := requestBody{
-		ChatID:    "",
+		ChatID:    p.chatId,
 		Text:      p.compileMessage(article),
 		ParseMode: "Markdown",
 	}
-	token := ""
 
 	res, err := client.R().
 		SetBody(body).
 		SetHeader("Content-Type", "application/json").
-		Post(fmt.Sprintf("%s/bot%s/%s", "https://api.telegram.org", token, "sendMessage"))
+		Post(fmt.Sprintf("%s/bot%s/%s", "https://api.telegram.org", p.token, "sendMessage"))
 	if res != nil && res.StatusCode() > 299 {
 		return fmt.Errorf("cant send message. Code: %d, response: %s. request: %s", res.StatusCode(), res.String(), res.Request.Body)
 	}
@@ -63,5 +71,10 @@ func (p TelegramPublisher) publishArticle(article *domain.Article) error {
 }
 
 func (p TelegramPublisher) compileMessage(article *domain.Article) string {
-	return fmt.Sprintf("[%s](%s)\n\n%s", article.Title, article.Href, article.Tags)
+	return fmt.Sprintf(
+		"[%s](%s)\n\n%s",
+		article.Title,
+		article.Href,
+		strings.Replace(article.Tags, "_", "\\_", -1),
+	)
 }
