@@ -49,16 +49,6 @@ func (c Config) GetInt(key string) int {
 	return viper.GetInt(key)
 }
 
-// Get returns struct from config
-func (c Config) Get(key string, strct interface{}) interface{} {
-	err := viper.UnmarshalKey(key, strct)
-	if err != nil {
-		fmt.Printf("unable to decode into config struct, %v", err)
-	}
-
-	return strct
-}
-
 // UnmarshalKey fill struct from config
 func (c Config) UnmarshalKey(key string, strct interface{}) error {
 	return viper.UnmarshalKey(key, strct)

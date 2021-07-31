@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/boliev/fnl-news/internal/domain"
 	"github.com/go-resty/resty/v2"
+	log "github.com/sirupsen/logrus"
 	"regexp"
 	"strings"
 )
@@ -39,14 +40,10 @@ func (p Onefnl) Parse() ([]*domain.Article, error) {
 		article, err := p.getArticle(v)
 		if err != nil {
 			//логгер?
-			fmt.Println(err.Error())
+			log.Warn(err.Error())
 			continue
 		}
 		parsedArticles = append(parsedArticles, article)
-		fmt.Printf(
-			"title: %s\nhref: %s\nimage: %s\ndate: %s\ntags: %s\n----------\n",
-			article.Title, article.Href, article.ImageURL, article.Date, article.Tags,
-		)
 	}
 	return parsedArticles, nil
 }
@@ -93,7 +90,6 @@ func (p Onefnl) getArticlesList() ([]articlesListItem, error) {
 			href:  p.Domain + p.Path + href,
 		})
 	}
-	//fmt.Println(articles)
 
 	return articles, nil
 }

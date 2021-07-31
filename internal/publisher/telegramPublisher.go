@@ -5,6 +5,7 @@ import (
 	"github.com/boliev/fnl-news/internal/domain"
 	"github.com/boliev/fnl-news/internal/repository"
 	"github.com/go-resty/resty/v2"
+	log "github.com/sirupsen/logrus"
 	"strings"
 )
 
@@ -45,7 +46,7 @@ func (p TelegramPublisher) PublishNew() {
 	for _, article := range newArticles {
 		err := p.publishArticle(article)
 		if err != nil {
-			fmt.Println(fmt.Errorf("cant publish article: %s", err.Error()))
+			log.Warnf("cant publish article: %s", err.Error())
 		}
 	}
 }

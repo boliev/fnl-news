@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/boliev/fnl-news/internal/domain"
 	"github.com/go-resty/resty/v2"
+	log "github.com/sirupsen/logrus"
 	"regexp"
 	"strings"
 )
@@ -43,15 +44,10 @@ func (s Sportbox) Parse() ([]*domain.Article, error) {
 	for _, v := range articles {
 		article, err := s.getArticle(v)
 		if err != nil {
-			// логгер?
-			fmt.Println(err.Error())
+			log.Warn(err.Error())
 			continue
 		}
 		parsedArticles = append(parsedArticles, article)
-		fmt.Printf(
-			"title: %s\nhref: %s\nimage: %s\ndate: %s\ntags: %s\n----------\n",
-			article.Title, article.Href, article.ImageURL, article.Date, article.Tags,
-		)
 	}
 	return parsedArticles, nil
 }
