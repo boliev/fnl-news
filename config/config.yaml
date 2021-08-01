@@ -8,3 +8,6 @@ parsers:
   sportsru:
     domain: "https://www.sports.ru"
     path: "/fnl/"
+  kulichki:
+    domain: "https://football.kulichki.net"
+    path: "/fnl/"

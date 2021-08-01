@@ -56,3 +56,14 @@ func (t TagMatcher) MatchTags(text string) []string {
 
 	return tags
 }
+
+// GetAllTags returns all tags
+func (t TagMatcher) GetAllTags() []string {
+	var tags []string
+	for k := range availableTags {
+		tags = append(tags, k)
+	}
+	sort.Strings(tags)
+
+	return tags
+}

@@ -26,5 +26,12 @@ func GetParsers(config map[string]Config) []Parser {
 		log.Warnf("Unable to find config for sportsru parser")
 	}
 
+	if kulichkiConfig, ok := config["kulichki"]; ok {
+		kulichki := newKulichkiParser(kulichkiConfig)
+		parsers = append(parsers, kulichki)
+	} else {
+		log.Warnf("Unable to find config for sportsru parser")
+	}
+
 	return parsers
 }
