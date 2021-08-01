@@ -5,3 +5,6 @@ parsers:
   onefnl:
     domain: "https://1fnl.ru"
     path: "/news/"
+  sportsru:
+    domain: "https://www.sports.ru"
+    path: "/fnl/"

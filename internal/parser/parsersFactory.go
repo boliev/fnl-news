@@ -19,5 +19,12 @@ func GetParsers(config map[string]Config) []Parser {
 		log.Warnf("Unable to find config for onefnl parser")
 	}
 
+	if sportsruConfig, ok := config["sportsru"]; ok {
+		sportsru := newSportsruParser(sportsruConfig)
+		parsers = append(parsers, sportsru)
+	} else {
+		log.Warnf("Unable to find config for sportsru parser")
+	}
+
 	return parsers
 }

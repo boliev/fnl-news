@@ -63,8 +63,6 @@ func (s Sportbox) getArticle(item articlesListItem) (*domain.Article, error) {
 		return nil, err
 	}
 
-	article.ImageURL = s.getField("<img itemprop=\"image\" src=\"(.*?)\">", articlePage)
-	article.Date = s.getField("<meta itemprop=\"dateCreated\" content=\"(.*?)\">", articlePage)
 	article.HTML = s.getField("<div class=\"js-mediator-article\">(.*?)</div>", articlePage)
 
 	matcher := NewTagMatcher()
