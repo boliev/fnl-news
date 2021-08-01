@@ -94,7 +94,6 @@ func (p Sportsru) getArticlesList() ([]articlesListItem, error) {
 			title: title,
 			href:  href,
 		})
-		log.Infof("%s %s", title, href)
 	}
 
 	return articles, nil
