@@ -20,8 +20,7 @@ type articlesListItem struct {
 	href  string
 }
 
-// NewSportboxParser creates Sportbox parser
-func NewSportboxParser(config Config) *Sportbox {
+func newSportboxParser(config Config) *Sportbox {
 	return &Sportbox{
 		Domain: config.Domain,
 		Path:   config.Path,

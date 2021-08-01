@@ -22,16 +22,21 @@ type requestBody struct {
 	ParseMode string `json:"parse_mode"`
 }
 
+// TelegramPublisherConfig config for telegram publisher
+type TelegramPublisherConfig struct {
+	ChatID string
+	Token  string
+}
+
 // NewTelegramPublisher creates publisher
 func NewTelegramPublisher(
 	repository *repository.ArticleRepository,
-	chatID string,
-	token string,
+	config *TelegramPublisherConfig,
 ) *TelegramPublisher {
 	return &TelegramPublisher{
 		repository: repository,
-		chatID:     chatID,
-		token:      token,
+		chatID:     config.ChatID,
+		token:      config.Token,
 	}
 }
 

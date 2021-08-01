@@ -36,6 +36,7 @@ func NewConfig() (*Config, error) {
 			return nil, fmt.Errorf("fatal error config file: %s ", err.Error())
 		}
 	}
+
 	return &Config{}, nil
 }
 

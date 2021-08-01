@@ -16,7 +16,7 @@ type Onefnl struct {
 }
 
 // NewOnefnlParser creates Onefnl parser
-func NewOnefnlParser(config Config) *Onefnl {
+func newOnefnlParser(config Config) *Onefnl {
 	return &Onefnl{
 		Domain: config.Domain,
 		Path:   config.Path,
