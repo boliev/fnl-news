@@ -7,6 +7,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
 	"strings"
+	"sync"
 )
 
 // TelegramPublisher struct
@@ -48,12 +49,19 @@ func (p TelegramPublisher) GetName() string {
 // PublishNew publishes new articles
 func (p TelegramPublisher) PublishNew() {
 	newArticles := p.repository.GetNewTg()
+	var waitGroup sync.WaitGroup
+	waitGroup.Add(len(newArticles))
 	for _, article := range newArticles {
-		err := p.publishArticle(article)
-		if err != nil {
-			log.Warnf("cant publish article: %s", err.Error())
-		}
+		go func(a *domain.Article, wg *sync.WaitGroup) {
+			err := p.publishArticle(a)
+			if err != nil {
+				log.Warnf("cant publish article: %s", err.Error())
+			}
+			wg.Done()
+		}(article, &waitGroup)
 	}
+
+	waitGroup.Wait()
 }
 
 func (p TelegramPublisher) publishArticle(article *domain.Article) error {

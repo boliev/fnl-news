@@ -36,14 +36,26 @@ func (p Onefnl) Parse() ([]*domain.Article, error) {
 		return parsedArticles, err
 	}
 
+	ch := make(chan *domain.Article)
+	chError := make(chan error)
 	for _, v := range articles {
-		article, err := p.getArticle(v)
-		if err != nil {
-			//логгер?
+		go func(v articlesListItem) {
+			article, err := p.getArticle(v)
+			if err != nil {
+				chError <- err
+			} else {
+				ch <- article
+			}
+		}(v)
+	}
+
+	for i := 0; i < len(articles); i++ {
+		select {
+		case err := <-chError:
 			log.Warn(err.Error())
-			continue
+		default:
+			parsedArticles = append(parsedArticles, <-ch)
 		}
-		parsedArticles = append(parsedArticles, article)
 	}
 	return parsedArticles, nil
 }

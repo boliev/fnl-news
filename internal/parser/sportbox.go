@@ -40,14 +40,28 @@ func (s Sportbox) Parse() ([]*domain.Article, error) {
 		return parsedArticles, err
 	}
 
+	ch := make(chan *domain.Article)
+	chError := make(chan error)
 	for _, v := range articles {
-		article, err := s.getArticle(v)
-		if err != nil {
-			log.Warn(err.Error())
-			continue
-		}
-		parsedArticles = append(parsedArticles, article)
+		go func(v articlesListItem) {
+			article, err := s.getArticle(v)
+			if err != nil {
+				chError <- err
+			} else {
+				ch <- article
+			}
+		}(v)
 	}
+
+	for i := 0; i < len(articles); i++ {
+		select {
+		case err := <-chError:
+			log.Warn(err.Error())
+		default:
+			parsedArticles = append(parsedArticles, <-ch)
+		}
+	}
+
 	return parsedArticles, nil
 }
 
