@@ -17,7 +17,7 @@ type App struct {
 	Db                *gorm.DB
 	ArticleRepository *repository.ArticleRepository
 	publishers        []publisher.Publisher
-	parsers           []parser.Parser
+	parsers           []*parser.Parser
 }
 
 // Start the app
@@ -40,7 +40,7 @@ func (app App) Start() {
 	log.Infof("Finish %s", time.Now().Sub(start).String())
 }
 
-func (app App) parse(parser parser.Parser, wg *sync.WaitGroup) {
+func (app App) parse(parser *parser.Parser, wg *sync.WaitGroup) {
 	articles, err := parser.Parse()
 	if err != nil {
 		log.Warnf("error: %s", err.Error())

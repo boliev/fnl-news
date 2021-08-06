@@ -1,37 +1,25 @@
 package parser
 
-import log "github.com/sirupsen/logrus"
+import (
+	"github.com/boliev/fnl-news/internal/source"
+	"github.com/boliev/fnl-news/pkg/httpClient"
+)
 
 // GetParsers returns parsers list
-func GetParsers(config map[string]Config) []Parser {
-	var parsers []Parser
-	if sportboxConfig, ok := config["sportbox"]; ok {
-		sportbox := newSportboxParser(sportboxConfig)
-		parsers = append(parsers, sportbox)
-	} else {
-		log.Warnf("Unable to find config for sportbox parser")
-	}
+func GetParsers() []*Parser {
+	var parsers []*Parser
+	var tagMatcher = NewTagMatcher()
+	var client = httpclient.NewResty()
+	var client1251 = httpclient.NewResty1251()
 
-	if onefnlConfig, ok := config["onefnl"]; ok {
-		onefnl := newOnefnlParser(onefnlConfig)
-		parsers = append(parsers, onefnl)
-	} else {
-		log.Warnf("Unable to find config for onefnl parser")
-	}
-
-	if sportsruConfig, ok := config["sportsru"]; ok {
-		sportsru := newSportsruParser(sportsruConfig)
-		parsers = append(parsers, sportsru)
-	} else {
-		log.Warnf("Unable to find config for sportsru parser")
-	}
-
-	if kulichkiConfig, ok := config["kulichki"]; ok {
-		kulichki := newKulichkiParser(kulichkiConfig)
-		parsers = append(parsers, kulichki)
-	} else {
-		log.Warnf("Unable to find config for sportsru parser")
-	}
+	sportBox := NewParser(source.NewSportboxSource(), tagMatcher, client)
+	parsers = append(parsers, sportBox)
+	kulichki := NewParser(source.NewKulichkiParser(), tagMatcher, client1251)
+	parsers = append(parsers, kulichki)
+	oneFnl := NewParser(source.NewOnefnlParser(), tagMatcher, client)
+	parsers = append(parsers, oneFnl)
+	sportsru := NewParser(source.NewSportsruParser(), tagMatcher, client)
+	parsers = append(parsers, sportsru)
 
 	return parsers
 }

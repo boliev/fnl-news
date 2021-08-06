@@ -46,7 +46,7 @@ func DiCreateApp(
 	db *gorm.DB,
 	articleRepository *repository.ArticleRepository,
 	publishers []publisher.Publisher,
-	parsers []parser.Parser,
+	parsers []*parser.Parser,
 ) *App {
 	return &App{
 		Cfg:               cfg,
@@ -71,13 +71,6 @@ func DiCreatePublishers(
 }
 
 // DiCreateParsers di function for parsers lis
-func DiCreateParsers(
-	config *config.Config,
-) []parser.Parser {
-	var parsersConfig map[string]parser.Config
-	err := config.UnmarshalKey("parsers", &parsersConfig)
-	if err != nil {
-		log.Panicf("Unable to get parsers config, %v", err)
-	}
-	return parser.GetParsers(parsersConfig)
+func DiCreateParsers() []*parser.Parser {
+	return parser.GetParsers()
 }

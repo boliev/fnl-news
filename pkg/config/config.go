@@ -13,18 +13,20 @@ type Config struct {
 
 // NewConfig constructor
 func NewConfig() (*Config, error) {
-	viper.SetConfigName("config.yaml")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath("./config")
-	err := viper.ReadInConfig() // Find and read the config file
-	if err != nil {
-		return nil, fmt.Errorf("fatal error config file: %s ", err.Error())
+	if _, err := os.Stat("config.yaml"); err == nil {
+		viper.SetConfigName("config.yaml")
+		viper.SetConfigType("yaml")
+		viper.AddConfigPath("./config")
+		err := viper.ReadInConfig() // Find and read the config file
+		if err != nil {
+			return nil, fmt.Errorf("fatal error config file: %s ", err.Error())
+		}
 	}
 
 	viper.SetConfigName(".env")
 	viper.SetConfigType("env")
 	viper.AddConfigPath("./")
-	err = viper.MergeInConfig() // Find and read the config file
+	err := viper.MergeInConfig() // Find and read the config file
 	if err != nil {
 		return nil, fmt.Errorf("fatal error config file: %s ", err.Error())
 	}
