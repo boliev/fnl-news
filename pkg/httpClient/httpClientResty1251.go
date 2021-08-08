@@ -1,6 +1,7 @@
 package httpclient
 
 import (
+	"fmt"
 	"github.com/go-resty/resty/v2"
 	"golang.org/x/text/encoding/charmap"
 )
@@ -33,4 +34,19 @@ func (c Resty1251) Get(url string) (string, error) {
 	}
 
 	return res, nil
+}
+
+// Post sends Post Request
+func (c Resty1251) Post(url string, body interface{}, headers map[string]string) error {
+	client := resty.New()
+
+	res, err := client.R().
+		SetBody(body).
+		SetHeaders(headers).
+		Post(url)
+	if res != nil && res.StatusCode() > 299 {
+		return fmt.Errorf("code: %d, response: %s. request: %s", res.StatusCode(), res.String(), res.Request.Body)
+	}
+
+	return err
 }

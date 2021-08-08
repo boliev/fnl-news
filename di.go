@@ -6,6 +6,7 @@ import (
 	"github.com/boliev/fnl-news/internal/publisher"
 	"github.com/boliev/fnl-news/internal/repository"
 	"github.com/boliev/fnl-news/pkg/config"
+	"github.com/boliev/fnl-news/pkg/httpClient"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -40,6 +41,11 @@ func DiCreateArticleRepository(db *gorm.DB) *repository.ArticleRepository {
 	return repository.CreateArticleRepository(db)
 }
 
+// DiCreateHTTPClient di function http client
+func DiCreateHTTPClient() httpclient.Client {
+	return httpclient.NewResty()
+}
+
 // DiCreateApp di function for app
 func DiCreateApp(
 	cfg *config.Config,
@@ -61,13 +67,14 @@ func DiCreateApp(
 func DiCreatePublishers(
 	articleRepository *repository.ArticleRepository,
 	config *config.Config,
+	client httpclient.Client,
 ) []publisher.Publisher {
 	tgConfig := &publisher.TelegramPublisherConfig{
 		ChatID: config.GetString("tg_chat_id"),
 		Token:  config.GetString("tg_token"),
 	}
 
-	return publisher.GetPublishers(articleRepository, tgConfig)
+	return publisher.GetPublishers(articleRepository, tgConfig, client)
 }
 
 // DiCreateParsers di function for parsers lis

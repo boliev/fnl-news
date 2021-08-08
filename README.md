@@ -53,4 +53,5 @@ Note that there is no service container, only database. Use it only for developi
  - Domain entity `Article` depends on `Gorm` module as far as contains gorm descriptions for the fields.
  - Parsers for different sources are described manually (`internal/parser/ParsersFactory`), maybe it is a good idea to automate it somehow
  - ArticleRepository knows how to mark an article as sent for a concrete publisher(Telegram publisher). I guess we don't want to edit the article repository every time when a new publisher was added.
+ - `httpClientResty` and `httpClientResty1251` have similar Post method.
  - Add tests

@@ -1,6 +1,9 @@
 package httpclient
 
-import "github.com/go-resty/resty/v2"
+import (
+	"fmt"
+	"github.com/go-resty/resty/v2"
+)
 
 // Resty struct
 type Resty struct {
@@ -23,4 +26,19 @@ func (c Resty) Get(url string) (string, error) {
 	}
 
 	return resp.String(), nil
+}
+
+// Post sends Post Request
+func (c Resty) Post(url string, body interface{}, headers map[string]string) error {
+	client := resty.New()
+
+	res, err := client.R().
+		SetBody(body).
+		SetHeaders(headers).
+		Post(url)
+	if res != nil && res.StatusCode() > 299 {
+		return fmt.Errorf("code: %d, response: %s. request: %s", res.StatusCode(), res.String(), res.Request.Body)
+	}
+
+	return err
 }
