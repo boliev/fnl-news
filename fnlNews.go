@@ -34,8 +34,8 @@ func (app App) Start() {
 	waitGroup.Wait()
 	log.Info("Parsing complete")
 	//Publish
-	for _, pblisher := range app.publishers {
-		pblisher.PublishNew()
+	for _, publ := range app.publishers {
+		publ.PublishNew()
 	}
 	log.Infof("Finish %s", time.Now().Sub(start).String())
 }

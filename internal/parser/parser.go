@@ -13,7 +13,7 @@ import (
 // Parser struct
 type Parser struct {
 	source     source.Source
-	tagMatcher *TagMatcher
+	tagMatcher TagMatcher
 	client     httpclient.Client
 }
 
@@ -23,7 +23,7 @@ type articlesListItem struct {
 }
 
 // NewParser Parser constructor
-func NewParser(source source.Source, tagMatcher *TagMatcher, client httpclient.Client) *Parser {
+func NewParser(source source.Source, tagMatcher TagMatcher, client httpclient.Client) *Parser {
 	return &Parser{
 		source:     source,
 		tagMatcher: tagMatcher,

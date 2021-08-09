@@ -1,4 +1,5 @@
 # fnl-news
+[![Go Report Card](https://goreportcard.com/badge/github.com/boliev/fnl-news)](https://goreportcard.com/report/github.com/boliev/fnl-news)
 ## The story
 As a big fan of the Alania Vladikavkaz football club, which plays in the second Russian league (FNL), I want to get all news about the team from all sports sites in one place. I guess, there are other fans, who want to get news about their teams in FNL. So the FNL-news is a small service, which parses several most popular Russian sports sites, added team-tags to the articles (#Alania if FC Alania mentioned in an article, or #Torpedo if FC Torpedo mentioned), and posts the links in a telegram channel.
 ## Run
@@ -6,6 +7,10 @@ As a big fan of the Alania Vladikavkaz football club, which plays in the second 
 The service needs PostgreSQL database DSN, telegram bot access token, and telegram channel id. Default values are in the `.env` files, which can be replaced by values from `.env.local`. Just copy the file and change the values
 ```
 cp .env .env.local
+```
+### Run test
+```shell
+ go test ./tests/...
 ```
 ### Build
 ```shell
@@ -34,6 +39,7 @@ Note that there is no service container, only database. Use it only for developi
  - [Viper](https://github.com/spf13/viper) for dealing with config files
  - [dig](https://github.com/uber-go/dig) for dependency injection
  - [GORM](https://github.com/go-gorm/gorm/) as an ORM
+ - [Testify](https://github.com/stretchr/testify) for unit tests
  
 ### Packages
  - `pkg/config` - Wrapper for the Viper module
