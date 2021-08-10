@@ -22,6 +22,7 @@ func buildContainer() *dig.Container {
 	provide(container, fnlnews.DiCreateDB)
 	provide(container, fnlnews.DiCreateArticleRepository)
 	provide(container, fnlnews.DiCreateHTTPClient)
+	provide(container, fnlnews.DiCreateTagMatcher)
 	provide(container, fnlnews.DiCreatePublishers)
 	provide(container, fnlnews.DiCreateParsers)
 	provide(container, fnlnews.DiCreateApp)

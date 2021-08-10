@@ -37,8 +37,8 @@ func DiCreateConfig() *config.Config {
 }
 
 // DiCreateArticleRepository di function for article repository
-func DiCreateArticleRepository(db *gorm.DB) *repository.ArticleRepository {
-	return repository.CreateArticleRepository(db)
+func DiCreateArticleRepository(db *gorm.DB) repository.Article {
+	return repository.CreateArticlePostgreRepository(db)
 }
 
 // DiCreateHTTPClient di function http client
@@ -50,7 +50,7 @@ func DiCreateHTTPClient() httpclient.Client {
 func DiCreateApp(
 	cfg *config.Config,
 	db *gorm.DB,
-	articleRepository *repository.ArticleRepository,
+	articleRepository repository.Article,
 	publishers []publisher.Publisher,
 	parsers []*parser.Parser,
 ) *App {
@@ -65,7 +65,7 @@ func DiCreateApp(
 
 // DiCreatePublishers di function for publishers lis
 func DiCreatePublishers(
-	articleRepository *repository.ArticleRepository,
+	articleRepository repository.Article,
 	config *config.Config,
 	client httpclient.Client,
 ) []publisher.Publisher {
@@ -77,7 +77,12 @@ func DiCreatePublishers(
 	return publisher.GetPublishers(articleRepository, tgConfig, client)
 }
 
-// DiCreateParsers di function for parsers lis
-func DiCreateParsers() []*parser.Parser {
-	return parser.GetParsers()
+// DiCreateParsers di function for parsers list
+func DiCreateParsers(matcher parser.TagMatcher, client httpclient.Client) []*parser.Parser {
+	return parser.GetParsers(matcher, client, httpclient.NewResty1251())
+}
+
+// DiCreateTagMatcher di function for tag matcher
+func DiCreateTagMatcher() parser.TagMatcher {
+	return parser.NewTagMatcher()
 }

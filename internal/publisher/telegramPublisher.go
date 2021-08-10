@@ -12,7 +12,7 @@ import (
 
 // TelegramPublisher struct
 type TelegramPublisher struct {
-	repository *repository.ArticleRepository
+	repository repository.Article
 	client     httpclient.Client
 	chatID     string
 	token      string
@@ -32,7 +32,7 @@ type TelegramPublisherConfig struct {
 
 // NewTelegramPublisher creates publisher
 func NewTelegramPublisher(
-	repository *repository.ArticleRepository,
+	repository repository.Article,
 	config *TelegramPublisherConfig,
 	client httpclient.Client,
 ) *TelegramPublisher {
@@ -42,11 +42,6 @@ func NewTelegramPublisher(
 		chatID:     config.ChatID,
 		token:      config.Token,
 	}
-}
-
-// GetName returns publisher name
-func (p TelegramPublisher) GetName() string {
-	return "Telegram"
 }
 
 // PublishNew publishes new articles

@@ -15,7 +15,7 @@ import (
 type App struct {
 	Cfg               *config.Config
 	Db                *gorm.DB
-	ArticleRepository *repository.ArticleRepository
+	ArticleRepository repository.Article
 	publishers        []publisher.Publisher
 	parsers           []*parser.Parser
 }

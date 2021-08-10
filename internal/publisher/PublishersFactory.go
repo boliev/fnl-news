@@ -7,7 +7,7 @@ import (
 
 // GetPublishers returns publishers list
 func GetPublishers(
-	articleRepository *repository.ArticleRepository,
+	articleRepository repository.Article,
 	telegramConfig *TelegramPublisherConfig,
 	client httpclient.Client,
 ) []Publisher {

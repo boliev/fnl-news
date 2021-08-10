@@ -6,12 +6,8 @@ import (
 )
 
 // GetParsers returns parsers list
-func GetParsers() []*Parser {
+func GetParsers(tagMatcher TagMatcher, client httpclient.Client, client1251 httpclient.Client) []*Parser {
 	var parsers []*Parser
-	var tagMatcher = NewTagMatcher()
-	var client = httpclient.NewResty()
-	var client1251 = httpclient.NewResty1251()
-
 	sportBox := NewParser(source.NewSportboxSource(), tagMatcher, client)
 	parsers = append(parsers, sportBox)
 	kulichki := NewParser(source.NewKulichkiParser(), tagMatcher, client1251)
@@ -20,6 +16,5 @@ func GetParsers() []*Parser {
 	parsers = append(parsers, oneFnl)
 	sportsru := NewParser(source.NewSportsruParser(), tagMatcher, client)
 	parsers = append(parsers, sportsru)
-
 	return parsers
 }

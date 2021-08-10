@@ -7,7 +7,7 @@ import (
 
 // ClientMock mock for http client
 type ClientMock struct {
-	httpclient.Resty
+	httpclient.Client
 	mock.Mock
 }
 
@@ -15,4 +15,10 @@ type ClientMock struct {
 func (c *ClientMock) Get(url string) (string, error) {
 	args := c.Called(url)
 	return args.String(0), args.Error(1)
+}
+
+// Post mock function for post
+func (c *ClientMock) Post(url string, body interface{}, headers map[string]string) error {
+	args := c.Called(url, body, headers)
+	return args.Error(0)
 }
